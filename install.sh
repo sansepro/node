@@ -18,8 +18,7 @@ if ! command -v docker >/dev/null 2>&1; then
   curl -fsSL https://get.docker.com | sh
 fi
 
-mkdir -p /opt/$NODE_NAME
-cd /opt/$NODE_NAME
+mkdir -p /opt/$NODE_NAME && cd /opt/$NODE_NAME
 
 
 read -p "Введите имя (remnanode) [по умолчанию ${DEFAULT_NAME}]: " NODE_NAME
