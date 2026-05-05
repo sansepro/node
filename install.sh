@@ -6,15 +6,15 @@ DEFAULT_PORT=2000
 FILE="/etc/ufw/before.rules"
 BACKUP="/etc/ufw/before.rules.bak_$(date +%s)"
 
-echo -ne "Обновление системы..."
+echo "Обновление системы..."\r
 
 apt update -y && apt upgrade -y && apt install curl wget ufw -y
 
-echo -ne "Проверка Docker..."
+echo "Проверка Docker..."
 
 # Проверка Docker
 if ! command -v docker >/dev/null 2>&1; then
-  echo -ne "Docker не найден. Устанавливаем..."
+  echo "Docker не найден. Устанавливаем..."
   curl -fsSL https://get.docker.com | sh
 fi
 
@@ -40,7 +40,7 @@ start_ufw_icmp() {
 
   cp "$FILE" "$BACKUP"
   echo "Создан backup: ${BACKUP}"
-  echo -ne "Замена ACCEPT → DROP для ICMP..."
+  echo "Замена ACCEPT → DROP для ICMP..."
 
   # INPUT
   sed -i '/ufw-before-input -p icmp/ s/-j ACCEPT/-j DROP/g' "$FILE"
@@ -80,7 +80,7 @@ fi
 
 read -p "Введите SECRET_KEY: " SECRET_KEY
 if [[ -z "$SECRET_KEY" ]]; then
-  echo -ne "SECRET_KEY не может быть пустым"
+  echo "SECRET_KEY не может быть пустым"
   exit 1
 fi
 
