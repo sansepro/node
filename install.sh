@@ -88,7 +88,7 @@ if [[ -z "$NODE_PORT" ]]; then
   NODE_PORT=${NODE_PORT:-$DEFAULT_PORT}
 fi
 
-mkdir -p /opt/$NODE_NAME && cd /opt/$NODE_NAME
+mkdir -p /opt/$NODE_NAME && mkdir -p /opt/$NODE_NAME/logs && cd /opt/$NODE_NAME
 
 if [[ "$SETUP_UFW" == "ask" ]]; then
   read -p "Настроить ufw + ICMP (port: OpenSSH, 443, ${NODE_PORT})? (y/n): " answer
@@ -135,9 +135,31 @@ fi
 start_sysctl_update() {
 cat > /opt/sysctl.conf <<EOF
 vm.overcommit_memory = 1
-net.core.default_qdisc=fq
-net.ipv4.tcp_congestion_control=bbr
-net.ipv4.icmp_echo_ignore_all=1
+
+kernel.apparmor_restrict_unprivileged_userns = 1
+
+kernel.printk = 4 4 1 7
+kernel.kptr_restrict = 1
+kernel.sysrq = 176
+kernel.yama.ptrace_scope = 1
+kernel.pid_max = 4194304
+
+vm.max_map_count = 1048576
+vm.mmap_min_addr = 65536
+
+fs.protected_fifos = 1
+fs.protected_hardlinks = 1
+fs.protected_regular = 2
+fs.protected_symlinks = 1
+
+net.core.default_qdisc = fq
+net.ipv4.tcp_congestion_control = bbr
+
+net.ipv4.conf.all.rp_filter = 2
+net.ipv4.conf.default.rp_filter = 2
+
+net.ipv6.conf.all.use_tempaddr = 0
+net.ipv6.conf.default.use_tempaddr = 0
 EOF
 sysctl -p /opt/sysctl.conf
 }
@@ -167,6 +189,8 @@ services:
     environment:
       - NODE_PORT=${NODE_PORT}
       - SECRET_KEY="${SECRET_KEY}"
+    volumes:
+    - './logs:/var/log/remnanode'
 EOF
 
 docker compose up -d && docker compose logs -f -t
