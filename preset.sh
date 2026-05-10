@@ -82,4 +82,6 @@ cp "$TARGET" "$BACKUP"
 # Копируем содержимое backup файла обратно в before.rules
 cp "$SOURCE" "$TARGET"
 
+rm -rf "$SOURCE"
+
 ufw --force disable && ufw --force enable
