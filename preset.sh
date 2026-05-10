@@ -62,6 +62,8 @@ net.ipv4.tcp_slow_start_after_idle = 0
 EOF
 sysctl -p /opt/sysctl.conf
 
+cd /opt/remnanode
+
 docker compose down --rmi all && docker compose up -d
 
 TARGET="/etc/ufw/before.rules"
