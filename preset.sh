@@ -4,8 +4,6 @@ set -euo pipefail
 cat > /opt/sysctl.conf <<EOF
 vm.overcommit_memory = 1
 
-kernel.apparmor_restrict_unprivileged_userns = 1
-
 kernel.printk = 4 4 1 7
 kernel.kptr_restrict = 1
 kernel.sysrq = 176
